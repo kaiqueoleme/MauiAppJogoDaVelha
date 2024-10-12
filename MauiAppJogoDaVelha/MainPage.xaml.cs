@@ -1,4 +1,7 @@
-﻿namespace MauiAppJogoDaVelha
+﻿using System.Xml;
+
+/*
+namespace MauiAppJogoDaVelha
 {
     public partial class MainPage : ContentPage
     {
@@ -100,6 +103,100 @@
 
             btnReset.IsEnabled = true;
         }
+    }
+
+}
+*/
+
+namespace MauiAppJogoDaVelha
+{
+    public partial class MainPage : ContentPage
+    {
+        string vez = "X";
+        Button[,] botoes;
+
+        public MainPage()
+        {
+            InitializeComponent();
+            botoes = new Button[,]
+            {
+                {btn10, btn11, btn12 },
+                {btn20, btn21, btn22 },
+                {btn30, btn31, btn32 },
+            };
+        }
+
+        private void Button_Clicked(object sender, EventArgs e)
+        {
+            Button btn = (Button)sender;
+
+            if (btn.Text == "Reset")
+            {
+                Zerar();
+                return;
+            }
+
+            btn.IsEnabled = false;
+            btn.Text = vez;
+
+            vez = (vez == "X") ? "O" : "X";
+
+            if (VerificarVitoria("X")) {
+                MostrarResultado("O [X] ganhou!");
+            }
+
+            if (VerificarVitoria("O"))
+            {
+                MostrarResultado("O [O] ganhou!");
+            }
+
+            if (VerificarVelha())
+            {
+                MostrarResultado("Deu velha");
+            }
+
+
+        }
+
+        bool VerificarVitoria (string jogador)
+        {
+            return (
+                (botoes[0, 0].Text == jogador && botoes[0, 1].Text == jogador && botoes[0, 2].Text == jogador) || // Linha 1
+                (botoes[1, 0].Text == jogador && botoes[1, 1].Text == jogador && botoes[1, 2].Text == jogador) || // Linha 2
+                (botoes[2, 0].Text == jogador && botoes[2, 1].Text == jogador && botoes[2, 2].Text == jogador) || // Linha 3
+                (botoes[0, 0].Text == jogador && botoes[1, 0].Text == jogador && botoes[2, 0].Text == jogador) || // Coluna 1
+                (botoes[0, 1].Text == jogador && botoes[1, 1].Text == jogador && botoes[2, 1].Text == jogador) || // Coluna 2
+                (botoes[0, 2].Text == jogador && botoes[1, 2].Text == jogador && botoes[2, 2].Text == jogador) || // Coluna 3
+                (botoes[0, 0].Text == jogador && botoes[1, 1].Text == jogador && botoes[2, 2].Text == jogador) || // Diagonal principal
+                (botoes[0, 2].Text == jogador && botoes[1, 1].Text == jogador && botoes[2, 0].Text == jogador)    // Diagonal secundária
+                );
+        }
+
+        bool VerificarVelha()
+        {
+            foreach (var btn in botoes)
+            {
+                if (btn.IsEnabled) return false;
+            }
+            return true;
+        }
+
+        void MostrarResultado(string mensagem)
+        {
+            DisplayAlert("Resultado", mensagem, "Ok");
+            Zerar();
+        }
+
+        void Zerar()
+        {
+            vez = "X";
+            foreach (var btn in botoes)
+            {
+                btn.Text = "";
+                btn.IsEnabled = true;
+            }
+        }
+
     }
 
 }
