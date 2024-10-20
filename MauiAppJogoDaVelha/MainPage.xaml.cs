@@ -1,123 +1,21 @@
-﻿using System.Xml;
-
-/*
-namespace MauiAppJogoDaVelha
-{
-    public partial class MainPage : ContentPage
-    {
-        string vez = "X";
-        public MainPage()
-        {
-            InitializeComponent();
-        }
-
-        private void Button_Clicked(object sender, EventArgs e)
-        {
-            Button btn = (Button)sender;
-
-            btn.IsEnabled = false;
-
-
-            if (btn.Text == "Reset")
-            {
-                Zerar();
-            }
-            else
-                if (vez == "X")
-            {
-                btn.Text = "X";
-                vez = "O";
-            }
-            else
-            {
-                btn.Text = "O";
-                vez = "X";
-            }
-
-            //Verificação se X ganhou
-            if ((btn10.Text == "X" && btn11.Text == "X" && btn12.Text == "X") ||
-                (btn20.Text == "X" && btn21.Text == "X" && btn22.Text == "X") ||
-                (btn30.Text == "X" && btn31.Text == "X" && btn32.Text == "X") ||
-                (btn10.Text == "X" && btn20.Text == "X" && btn30.Text == "X") ||
-                (btn11.Text == "X" && btn21.Text == "X" && btn31.Text == "X") ||
-                (btn12.Text == "X" && btn22.Text == "X" && btn32.Text == "X") ||
-                (btn10.Text == "X" && btn21.Text == "X" && btn32.Text == "X") ||
-                (btn12.Text == "X" && btn21.Text == "X" && btn30.Text == "X")) 
-            {
-                DisplayAlert("Parabéns!", "O [X] Ganhou!", "Ok");
-                Zerar();
-            }
-
-            //Verificação se O ganhou
-            if ((btn10.Text == "O" && btn11.Text == "O" && btn12.Text == "O") ||
-                (btn20.Text == "O" && btn21.Text == "O" && btn22.Text == "O") ||
-                (btn30.Text == "O" && btn31.Text == "O" && btn32.Text == "O") ||
-                (btn10.Text == "O" && btn20.Text == "O" && btn30.Text == "O") ||
-                (btn11.Text == "O" && btn21.Text == "O" && btn31.Text == "O") ||
-                (btn12.Text == "O" && btn22.Text == "O" && btn32.Text == "O") ||
-                (btn10.Text == "O" && btn21.Text == "O" && btn32.Text == "O") ||
-                (btn12.Text == "O" && btn21.Text == "O" && btn30.Text == "O"))
-            {
-                DisplayAlert("Parabéns!", "O [O] Ganhou!", "Ok");
-                Zerar();
-            }
-
-            //Verificação se der Velha
-
-            if (btn10.IsEnabled == false && btn11.IsEnabled == false && btn12.IsEnabled == false &&
-                btn20.IsEnabled == false && btn21.IsEnabled == false && btn22.IsEnabled == false &&
-                btn30.IsEnabled == false && btn31.IsEnabled == false && btn32.IsEnabled == false)
-            {
-                DisplayAlert("Que pena!", "Deu Velha", "Ok");
-                Zerar();
-            }
-        }
-
-        void Zerar()
-        {
-            vez = "X";
-
-            btn10.Text = "";
-            btn11.Text = "";
-            btn12.Text = "";
-
-            btn20.Text = "";
-            btn21.Text = "";
-            btn22.Text = "";
-
-            btn30.Text = "";
-            btn31.Text = "";
-            btn32.Text = "";
-
-            btn10.IsEnabled = true;
-            btn11.IsEnabled = true;
-            btn12.IsEnabled = true;
-
-            btn20.IsEnabled = true;
-            btn21.IsEnabled = true;
-            btn22.IsEnabled = true;
-
-            btn30.IsEnabled = true;
-            btn31.IsEnabled = true;
-            btn32.IsEnabled = true;
-
-            btnReset.IsEnabled = true;
-        }
-    }
-
-}
-*/
+﻿using Microsoft.Maui.Graphics.Text;
+using System.Xml;
 
 namespace MauiAppJogoDaVelha
 {
     public partial class MainPage : ContentPage
     {
+        //Declaração de váriaveis
         string vez = "X";
         Button[,] botoes;
 
+
+
         public MainPage()
         {
             InitializeComponent();
+
+            //Atribuindo os x:Name dos botões da MainPage para um vetor bidimensional
             botoes = new Button[,]
             {
                 {btn10, btn11, btn12 },
@@ -130,26 +28,49 @@ namespace MauiAppJogoDaVelha
         {
             Button btn = (Button)sender;
 
+
+
+            //Caso o botão seja de reset, chamará o método Zerar para reiniciar o jogo e encerrará o evento
             if (btn.Text == "Reset")
             {
                 Zerar();
                 return;
             }
 
+            //Desativa o botão
             btn.IsEnabled = false;
+
+            //Mudará o texto do botão para o da string vez. Poderá ser "X" ou "O".
             btn.Text = vez;
 
-            vez = (vez == "X") ? "O" : "X";
+            //Muda a Fonte para Negrito.
+            btn.FontAttributes = FontAttributes.Bold;
 
+            //Caso vez seja "X", mudará a fonte para cor vermelha e seu valor para "O".
+            if (vez == "X")
+            {
+                btn.TextColor = Color.FromArgb("#FF6B63");
+                vez = "O";
+            } else
+            //Caso vez seja "O", mudará a fonte para cor azul e seu valor para "X".
+            {
+                btn.TextColor = Color.FromArgb("#4A7FF9");
+                vez = "X";
+            }
+
+
+            //Caso o método VerificarVitoria com parâmetro "X" retorne um valor verdadeiro, o método MostraResultado vai receber uma string "O [X] ganhou!".
             if (VerificarVitoria("X")) {
                 MostrarResultado("O [X] ganhou!");
             }
 
+            //Caso o método VerificarVitoria com parâmetro "O" retorne um valor verdadeiro, o método MostraResultado vai receber uma string "O [O] ganhou!".
             if (VerificarVitoria("O"))
             {
                 MostrarResultado("O [O] ganhou!");
             }
 
+            //Caso o método VerificarVelha retorne um valor verdadeiro, o método MostraResultado vai receber uma string "Deu velha".
             if (VerificarVelha())
             {
                 MostrarResultado("Deu velha");
@@ -158,9 +79,12 @@ namespace MauiAppJogoDaVelha
 
         }
 
+        //Método que retorna valor boolean com parâmetro sendo a string jogador que pode ser tanto "X" como "O".
         bool VerificarVitoria (string jogador)
         {
             return (
+
+                //Comparações para ver se o texto dos botões é o mesmo para linhas, colunas e diagonais.
                 (botoes[0, 0].Text == jogador && botoes[0, 1].Text == jogador && botoes[0, 2].Text == jogador) || // Linha 1
                 (botoes[1, 0].Text == jogador && botoes[1, 1].Text == jogador && botoes[1, 2].Text == jogador) || // Linha 2
                 (botoes[2, 0].Text == jogador && botoes[2, 1].Text == jogador && botoes[2, 2].Text == jogador) || // Linha 3
@@ -172,24 +96,32 @@ namespace MauiAppJogoDaVelha
                 );
         }
 
+        //Método que retorna valor boolean sem parâmetro para verificar se houve Velha.
         bool VerificarVelha()
         {
+            //Estrutura de repetição que verificará todos os valores da Matriz botoes.
             foreach (var btn in botoes)
             {
+                //Verifica se o botão está ativado ou desativado
                 if (btn.IsEnabled) return false;
             }
+            //Caso todos os botões retornem o valor false, o método retorna o valor true.
             return true;
         }
 
+        //Método que receberá uma string mensagem e reiniciará o jogo.
         void MostrarResultado(string mensagem)
         {
+            //Exibirá a mensagem da string.
             DisplayAlert("Resultado", mensagem, "Ok");
             Zerar();
         }
 
+        //Método para reiniciar o jogo e altera o valor de vez para "X".
         void Zerar()
         {
             vez = "X";
+            //Estrutura de repetição que apaga os textos e habilita todos os botões.
             foreach (var btn in botoes)
             {
                 btn.Text = "";
